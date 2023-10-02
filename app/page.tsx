@@ -1,113 +1,139 @@
-import Image from 'next/image'
+"use client"
+import React, { useRef, useState } from 'react';
 
-export default function Home() {
+const categories = ['Musikk', 'Norge Rundt', 'Viralt på nett', 'Rått & Roti', 'Category 5'];
+const points = [200, 400, 600, 800, 1000];
+
+const questions = {
+  0: 'What is the question for 200 points in Category 1?',
+  1: 'What is the question for 400 points in Category 1?',
+  2: 'What is the question for 600 points in Category 1?',
+  3: 'What is the question for 800 points in Category 1?',
+  4: 'What is the question for 1000 points in Category 1?',
+  5: 'What is the question for 200 points in Category 2?',
+  6: 'What is the question for 400 points in Category 2?',
+  7: 'What is the question for 600 points in Category 2?',
+  8: 'What is the question for 800 points in Category 2?',
+  9: 'What is the question for 1000 points in Category 2?',
+  10: 'What is the question for 200 points in Category 3?',
+  11: 'What is the question for 400 points in Category 3?',
+  12: 'What is the question for 600 points in Category 3?',
+  13: 'What is the question for 800 points in Category 3?',
+  14: 'What is the question for 1000 points in Category 3?',
+  15: 'What is the question for 200 points in Category 4?',
+  16: 'What is the question for 400 points in Category 4?',
+  17: 'What is the question for 600 points in Category 4?',
+  18: 'What is the question for 800 points in Category 4?',
+  19: 'What is the question for 1000 points in Category 4?',
+  20: 'What is the question for 200 points in Category 5?',
+  21: 'What is the question for 400 points in Category 5?',
+  22: 'What is the question for 600 points in Category 5?',
+  23: 'What is the question for 800 points in Category 5?',
+  24: 'What is the question for 1000 points in Category 5?',
+};
+
+
+const MainPage: React.FC = () => {
+  const dialogRef = useRef(null);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [teamNames, setTeamNames] = useState(['Team 1', 'Team 2', 'Team 3']);
+  const [teamPoints, setTeamPoints] = useState([0, 0, 0]);
+
+
+  const handleClick = (cardIndex) => {
+    setSelectedCard(cardIndex);
+    const dialog = dialogRef.current;
+
+    if (dialog) {
+      dialog.showModal();
+    }
+  };
+
+  const handleClose = () => {
+    const dialog = dialogRef.current;
+
+    if (dialog) {
+      dialog.close();
+      setSelectedCard(null); // Clear the selected card when the dialog is closed
+    }
+  };
+
+  const handleTeamNameChange = (index, newName) => {
+    const newTeamNames = [...teamNames];
+    newTeamNames[index] = newName;
+    setTeamNames(newTeamNames);
+  };
+
+  const handleTeamPointsChange = (index, newPoints) => {
+    const newTeamPoints = [...teamPoints];
+    newTeamPoints[index] = newPoints;
+    setTeamPoints(newTeamPoints);
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-semibold mb-4 text-center">Trivia Game</h1>
+      
+    {/* Render teams */}
+    <div className="grid grid-cols-3 gap-4 mb-4">
+        {teamNames.map((teamName, index) => (
+          <div key={index} className="bg-green-400 p-4 text-purple-900 rounded-lg text-center text-xl">
+            <input
+              type="text"
+              value={teamName}
+              onChange={(e) => handleTeamNameChange(index, e.target.value)}
+              className="text-green-900 bg-transparent border-b border-purple-900 focus:outline-none"
             />
-          </a>
+            <div className="mt-2">
+              Points:{" "}
+              <input
+                type="number"
+                value={teamPoints[index]}
+                onChange={(e) => handleTeamPointsChange(index, parseInt(e.target.value))}
+                className="text-green-900 bg-transparent border-b border-purple-900 focus:outline-none"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Render categories */}
+      <div className="grid grid-cols-5 gap-4">
+        {categories.map((category, categoryIndex) => (
+          <div key={categoryIndex} className="bg-cyan-400 p-4 text-cyan-900 rounded-lg text-center text-xl">
+            {category}
+          </div>
+        ))}
+      </div>
+      
+      {/* Render points */}
+      {points.map((point, rowIndex) => (
+        <div key={rowIndex} className="grid grid-cols-5 gap-4 mt-4">
+          {Array(5).fill(0).map((_, colIndex) => (
+            <div
+              key={colIndex}
+              className="text-teal-50 bg-cyan-900 p-8 rounded-lg text-center cursor-pointer text-xl hover:bg-cyan-600"
+              onClick={() => handleClick(rowIndex * 5 + colIndex)}
+            >
+              {point}
+            </div>
+          ))}
         </div>
-      </div>
+      ))}
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+      {/* Dialog */}
+      <dialog ref={dialogRef} className="dialog bg-white rounded-lg p-4 max-w-3xl mx-auto mt-20">
+        <h2 className="text-2xl font-semibold mb-2">{selectedCard !== null ? questions[selectedCard] : ''}</h2>
+        <button
+          className="bg-red-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-red-600 focus:outline-none"
+          onClick={handleClose}
         >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+          Close
+        </button>
+      </dialog>
+    </div>
+  );
+};
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default MainPage;
